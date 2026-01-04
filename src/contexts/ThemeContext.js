@@ -1,27 +1,36 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { loadFromLocalStorage, saveToLocalStorage } from '../utils/storage';
+import { THEME_STORAGE_KEY } from '../utils/constants';
 
-const ThemeContext = createContext();
+const ThemeContext = createContext({
+  darkMode: false,
+  toggleTheme: () => {}
+});
+
+function applyThemePreference(isDarkMode) {
+  if (isDarkMode) {
+    document.body.classList.add('dark-theme');
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.body.classList.remove('dark-theme');
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+}
 
 export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('darkMode');
-    return savedTheme ? JSON.parse(savedTheme) : false;
+    const savedTheme = loadFromLocalStorage(THEME_STORAGE_KEY);
+    return savedTheme !== null ? JSON.parse(savedTheme) : false;
   });
-  
+
   useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add('dark-theme');
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.body.classList.remove('dark-theme');
-      document.documentElement.setAttribute('data-theme', 'light');
-    }
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    applyThemePreference(darkMode);
+    saveToLocalStorage(THEME_STORAGE_KEY, JSON.stringify(darkMode));
   }, [darkMode]);
 
   const toggleTheme = () => {
-    setDarkMode(prev => !prev);
+    setDarkMode((prevMode) => !prevMode);
   };
 
   const value = {
@@ -36,6 +45,7 @@ export function ThemeProvider({ children }) {
   );
 }
 
+ThemeProvider.displayName = 'ThemeProvider';
 ThemeProvider.propTypes = {
   children: PropTypes.node.isRequired
 };
