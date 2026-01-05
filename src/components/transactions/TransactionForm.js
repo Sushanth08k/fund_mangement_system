@@ -29,11 +29,14 @@ function TransactionForm({ onTransactionAdded }) {
       return;
     }
 
+    let isMounted = true;
+
     async function fetchFormData() {
       try {
         const statesData = await getStates();
         const sectorsData = await getSectors();
-        
+        if (!isMounted) return;
+
         setStates(statesData);
         setSectors(sectorsData);
       } catch (error) {
@@ -43,20 +46,31 @@ function TransactionForm({ onTransactionAdded }) {
     }
 
     fetchFormData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [isAdmin, navigate]);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function fetchDistricts() {
       if (formData.stateId) {
         try {
           const districtsData = await getDistricts(formData.stateId);
-          setDistricts(districtsData);
+          if (isMounted) {
+            setDistricts(districtsData);
+            setErrors((prev) => ({ ...prev, districtId: '' }));
+          }
         } catch (error) {
           console.error('Error fetching districts:', error);
-          setErrors(prev => ({
-            ...prev,
-            districtId: 'Failed to load districts. Please try again.'
-          }));
+          if (isMounted) {
+            setErrors((prev) => ({
+              ...prev,
+              districtId: 'Failed to load districts. Please try again.'
+            }));
+          }
         }
       } else {
         setDistricts([]);
