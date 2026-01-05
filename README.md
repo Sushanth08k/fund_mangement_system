@@ -44,14 +44,17 @@ A web-based platform for transparent, efficient, and accountable allocation and 
    - Enable Authentication and Firestore Database
    - Add your web app and copy the Firebase config
    - Create a `.env` file in the project root and add your Firebase credentials:
-   ```
+   ```bash
    REACT_APP_FIREBASE_API_KEY=your_api_key
    REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
    REACT_APP_FIREBASE_PROJECT_ID=your_project_id
    REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
    REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
    REACT_APP_FIREBASE_APP_ID=your_app_id
+   REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
    ```
+   - If you do not use Firebase Analytics, `REACT_APP_FIREBASE_MEASUREMENT_ID` is optional.
+
 
 4. **Start the development server:**
    ```bash
