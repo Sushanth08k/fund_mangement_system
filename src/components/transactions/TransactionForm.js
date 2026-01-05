@@ -78,6 +78,9 @@ function TransactionForm({ onTransactionAdded }) {
     }
 
     fetchDistricts();
+    return () => {
+      isMounted = false;
+    };
   }, [formData.stateId]);
 
   const handleChange = (e) => {
