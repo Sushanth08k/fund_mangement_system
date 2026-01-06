@@ -14,17 +14,14 @@ export const isStrongPassword = (password) => {
 // Validate amount (positive number)
 export const isValidAmount = (amount) => {
   const numAmount = parseFloat(amount);
-  return !isNaN(numAmount) && numAmount > 0;
+  return Number.isFinite(numAmount) && numAmount > 0;
 };
 
-// Validate required field
 export const isRequired = (value) => {
   if (value === null || value === undefined) return false;
-  
   if (typeof value === 'string') {
     return value.trim() !== '';
   }
-  
   return true;
 };
 
