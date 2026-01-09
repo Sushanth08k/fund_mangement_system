@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { createTransaction } from '../../services/transactionService';
 import { getStates, getDistricts, getSectors } from '../../services/analyticsService';
 import { validateTransactionForm } from '../../utils/validators';
+import { parseNumberInput } from '../../utils/helpers';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -129,23 +130,24 @@ function TransactionForm({ onTransactionAdded }) {
         return;
       }
       
-      // Create transaction
-      const amount = parseFloat(formData.amount);
-      if (isNaN(amount)) {
+      // Create transaction (use parseNumberInput for consistent parsing)
+      const amount = parseNumberInput(formData.amount);
+      if (amount === null) {
         setErrors({ amount: 'Please enter a valid amount' });
         return;
       }
 
-      const result = await createTransaction({
+      const payload = {
         ...formData,
         amount,
+        description: formData.description.trim(),
+        beneficiaryName: formData.beneficiaryName.trim(),
         createdAt: new Date()
-      });
-      
+      };
+
+      const result = await createTransaction(payload);
       if (result) {
-        // Only call onTransactionAdded if the transaction was created successfully
         onTransactionAdded();
-        // Reset form data after successful creation
         setFormData({
           amount: '',
           description: '',
@@ -162,7 +164,7 @@ function TransactionForm({ onTransactionAdded }) {
       } else if (error.message.includes('not found')) {
         setErrors({ general: error.message });
       } else {
-        setErrors({ general: 'Transaction Success' });
+        setErrors({ general: 'Failed to create transaction. Please try again.' });
       }
     } finally {
       setLoading(false);
