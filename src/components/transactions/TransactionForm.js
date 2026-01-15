@@ -193,9 +193,11 @@ function TransactionForm({ onTransactionAdded }) {
             min="0"
             step="0.01"
             required
+            aria-invalid={!!errors.amount}
+            aria-describedby={errors.amount ? 'amount-error' : undefined}
             placeholder="Enter amount"
           />
-          {errors.amount && <div className="field-error">{errors.amount}</div>}
+          {errors.amount && <div id="amount-error" className="field-error">{errors.amount}</div>}
         </div>
         
         <div className="form-group">
@@ -212,7 +214,7 @@ function TransactionForm({ onTransactionAdded }) {
               <option key={state.id} value={state.id}>{state.name}</option>
             ))}
           </select>
-          {errors.stateId && <div className="field-error">{errors.stateId}</div>}
+          {errors.stateId && <div id="stateId-error" className="field-error">{errors.stateId}</div>}
         </div>
         
         <div className="form-group">
@@ -229,7 +231,7 @@ function TransactionForm({ onTransactionAdded }) {
               <option key={district.id} value={district.id}>{district.name}</option>
             ))}
           </select>
-          {errors.districtId && <div className="field-error">{errors.districtId}</div>}
+          {errors.districtId && <div id="districtId-error" className="field-error">{errors.districtId}</div>}
         </div>
         
         <div className="form-group">
@@ -246,7 +248,7 @@ function TransactionForm({ onTransactionAdded }) {
               <option key={sector.id} value={sector.id}>{sector.name}</option>
             ))}
           </select>
-          {errors.sectorId && <div className="field-error">{errors.sectorId}</div>}
+          {errors.sectorId && <div id="sectorId-error" className="field-error">{errors.sectorId}</div>}
         </div>
         
         <div className="form-group">
