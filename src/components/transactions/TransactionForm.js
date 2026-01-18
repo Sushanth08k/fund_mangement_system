@@ -159,6 +159,11 @@ function TransactionForm({ onTransactionAdded }) {
       }
     } catch (error) {
       console.error('Error creating transaction:', error);
+      // Helpful debug log for server-side errors
+      console.warn('Transaction submit error payload:', {
+        payload: { ...formData, amount: formData.amount },
+        message: error.message
+      });
       if (error.message.includes('Access denied')) {
         setErrors({ general: 'Access denied. Admin privileges required.' });
       } else if (error.message.includes('not found')) {
