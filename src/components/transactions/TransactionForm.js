@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+
 import { createTransaction } from '../../services/transactionService';
 import { getStates, getDistricts, getSectors } from '../../services/analyticsService';
+
 import { validateTransactionForm } from '../../utils/validators';
 import { parseNumberInput } from '../../utils/helpers';
+
 import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 function TransactionForm({ onTransactionAdded }) {
   const [formData, setFormData] = useState({
