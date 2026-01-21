@@ -1,4 +1,5 @@
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+import { CSV_DELIMITER } from './constants';
 
 export const generateId = (length = 8) => {
   if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
@@ -58,6 +59,13 @@ export const groupTransactionsByState = (transactions) => {
 };
 
 export const getRandomColor = () => {
+  // Prefer crypto-backed randomness when available for more uniform distribution
+  if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+    const arr = new Uint8Array(3);
+    window.crypto.getRandomValues(arr);
+    return `#${Array.from(arr).map((b) => b.toString(16).padStart(2, '0')).join('')}`;
+  }
+
   const letters = '0123456789ABCDEF';
   let color = '#';
   for (let i = 0; i < 6; i += 1) {
@@ -68,31 +76,42 @@ export const getRandomColor = () => {
 
 export const generateChartColors = (count) => {
   const colors = [];
+  if (!count || count <= 0) return colors;
+  // Use golden angle to distribute hues for perceptual distinctness
+  const GOLDEN_ANGLE = 137.508; // degrees
+  const saturation = 70; // percent
+  const lightness = 60; // percent
   for (let i = 0; i < count; i += 1) {
-    const hue = (i * 137.5) % 360;
-    colors.push(`hsla(${hue}, 70%, 60%, 0.8)`);
+    const hue = (i * GOLDEN_ANGLE) % 360;
+    colors.push(`hsla(${Math.round(hue)}, ${saturation}%, ${lightness}%, 0.85)`);
   }
   return colors;
 };
 
 export const downloadCSV = (data, filename = 'export.csv') => {
   if (!data || !data.length) return;
-
   const headers = Object.keys(data[0]);
-  const csvRows = [headers.join(',')];
+  const csvRows = [headers.join(CSV_DELIMITER)];
 
   for (const row of data) {
     const values = headers.map((header) => {
-      const value = row[header];
-      if (value instanceof Date) {
-        return `"${value.toISOString()}"`;
+      const raw = row[header];
+      if (raw === null || raw === undefined) return '';
+      if (raw instanceof Date) {
+        return `"${raw.toISOString()}"`;
       }
-      if (typeof value === 'object' && value !== null) {
-        return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
+      if (typeof raw === 'object') {
+        const s = JSON.stringify(raw);
+        return `"${s.replace(/"/g, '""')}"`;
       }
-      return `"${value}"`;
+      const str = String(raw);
+      // Quote only when necessary (delimiter, quote or newline present)
+      if (str.includes(CSV_DELIMITER) || str.includes('"') || /[\r\n]/.test(str)) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
     });
-    csvRows.push(values.join(','));
+    csvRows.push(values.join(CSV_DELIMITER));
   }
 
   const csvString = csvRows.join('\n');
