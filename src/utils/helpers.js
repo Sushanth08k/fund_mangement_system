@@ -24,39 +24,25 @@ export const calculatePercentage = (value, total) => {
   if (!total) return 0;
   return (value / total) * 100;
 };
-
-export const groupTransactionsByStatus = (transactions) => {
-  return transactions.reduce((acc, transaction) => {
-    const status = transaction.status || 'unknown';
-    if (!acc[status]) {
-      acc[status] = [];
-    }
-    acc[status].push(transaction);
+export const groupBy = (items = [], keyGetter, missingKey = 'unknown') => {
+  if (!Array.isArray(items)) return {};
+  return items.reduce((acc, item) => {
+    const rawKey = typeof keyGetter === 'function' ? keyGetter(item) : item[keyGetter];
+    const key = rawKey || missingKey;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
     return acc;
   }, {});
 };
 
-export const groupTransactionsBySector = (transactions) => {
-  return transactions.reduce((acc, transaction) => {
-    const sector = transaction.sectorName || 'unknown';
-    if (!acc[sector]) {
-      acc[sector] = [];
-    }
-    acc[sector].push(transaction);
-    return acc;
-  }, {});
-};
+export const groupTransactionsByStatus = (transactions) =>
+  groupBy(transactions, (t) => t.status, 'unknown');
 
-export const groupTransactionsByState = (transactions) => {
-  return transactions.reduce((acc, transaction) => {
-    const state = transaction.stateName || 'unknown';
-    if (!acc[state]) {
-      acc[state] = [];
-    }
-    acc[state].push(transaction);
-    return acc;
-  }, {});
-};
+export const groupTransactionsBySector = (transactions) =>
+  groupBy(transactions, (t) => t.sectorName, 'unknown');
+
+export const groupTransactionsByState = (transactions) =>
+  groupBy(transactions, (t) => t.stateName, 'unknown');
 
 export const getRandomColor = () => {
   // Prefer crypto-backed randomness when available for more uniform distribution
