@@ -1,6 +1,11 @@
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 import { CSV_DELIMITER } from './constants';
 
+/**
+ * Generate a short random id using crypto if available.
+ * @param {number} length
+ * @returns {string}
+ */
 export const generateId = (length = 8) => {
   if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
     const array = new Uint32Array(length);
@@ -15,15 +20,25 @@ export const generateId = (length = 8) => {
   return result;
 };
 
+/**
+ * Parse a user-provided numeric input to a finite number or null.
+ * Returns `null` for invalid or non-finite input.
+ */
 export const parseNumberInput = (value) => {
   const parsed = parseFloat(value);
   return Number.isFinite(parsed) ? parsed : null;
 };
 
+/**
+ * Calculate percentage of `value` relative to `total`.
+ */
 export const calculatePercentage = (value, total) => {
   if (!total) return 0;
   return (value / total) * 100;
 };
+/**
+ * Group an array of items by the provided key or key-getter function.
+ */
 export const groupBy = (items = [], keyGetter, missingKey = 'unknown') => {
   if (!Array.isArray(items)) return {};
   return items.reduce((acc, item) => {
@@ -44,6 +59,9 @@ export const groupTransactionsBySector = (transactions) =>
 export const groupTransactionsByState = (transactions) =>
   groupBy(transactions, (t) => t.stateName, 'unknown');
 
+/**
+ * Return a random hex color string. Uses crypto when available.
+ */
 export const getRandomColor = () => {
   // Prefer crypto-backed randomness when available for more uniform distribution
   if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
@@ -60,6 +78,9 @@ export const getRandomColor = () => {
   return color;
 };
 
+/**
+ * Generate `count` visually distinct HSLA colors using the golden angle.
+ */
 export const generateChartColors = (count) => {
   const colors = [];
   if (!count || count <= 0) return colors;
@@ -74,6 +95,9 @@ export const generateChartColors = (count) => {
   return colors;
 };
 
+/**
+ * Download an array of objects as CSV. Uses `CSV_DELIMITER` and safe quoting.
+ */
 export const downloadCSV = (data, filename = 'export.csv') => {
   if (!data || !data.length) return;
   const headers = Object.keys(data[0]);
