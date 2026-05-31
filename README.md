@@ -43,7 +43,7 @@ A web-based platform for transparent, efficient, and accountable allocation and 
    - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
    - Enable Authentication and Firestore Database
    - Add your web app and copy the Firebase config
-   - Create a `.env` file in the project root and add your Firebase credentials:
+   - Create a `.env.local` file in the project root and add your Firebase credentials:
    ```bash
    REACT_APP_FIREBASE_API_KEY=your_api_key
    REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
@@ -54,6 +54,7 @@ A web-based platform for transparent, efficient, and accountable allocation and 
    REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
    ```
    - If you do not use Firebase Analytics, `REACT_APP_FIREBASE_MEASUREMENT_ID` is optional.
+   - Keep this file out of version control; `.env.local` is ignored by Create React App by default.
 
 
 4. **Start the development server:**
